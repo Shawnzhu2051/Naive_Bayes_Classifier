@@ -34,5 +34,4 @@ class Data_Processing(object):
                 if not(len(item) < 3 or item == 'and' or item == 'for' or item == 'the' or item == 'with' or item == 'are' or item =='not' or item == 'this' or item == 'that' or item == 'was' or item == 'were'):
                     result.append(item)
             Result.append(result)
-
         return Result
