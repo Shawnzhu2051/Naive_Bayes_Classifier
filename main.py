@@ -1,6 +1,7 @@
 from __future__ import division
 import Data_Processing
 import Classifier
+import math
 
 
 class Naive_Bayes(object):
@@ -24,30 +25,40 @@ class Naive_Bayes(object):
 
     def training(self,table1,table2):
         Conditional_probability = {}
-        count = 0
+        flag = 0
         for (key1,value1) in table1:
             for (key2,value2) in table2:
                 if key1 == key2:
                     Conditional_probability[key1] = value2
-                    count = count + 1
-        print count
+                    flag = 1
+            if flag == 1:
+                flag = 0
+            else:
+                Conditional_probability[key1] = 1
         return Conditional_probability
 
     def clustering(self,PN,PJ,pwiN,pwiJ,target_list):
-        PtJ = 1
-        PtN = 1
+        logs = 0
+        J = 0
+        N = 0
         total_TP = 0
         correct_number = 0
         for line in target_list:
             total_TP = total_TP + 1
             for word in line:
-                if word in pwiJ :
-                    PtJ = PtJ * pwiJ[word]
-                if word in pwiN :
-                    PtN = PtN * pwiN[word]
-            D = (PJ*PtJ)/(PN*PtN)
-            if D <= 1:
+                if word in pwiJ:
+                    J = pwiJ[word]
+                else:
+                    J = 1
+                if word in pwiN:
+                    N = pwiN[word]
+                else:
+                    N = 1
+                logs = logs + math.log(J/N)
+            D = math.log(PJ/PN) + logs
+            if D < 0:
                 correct_number = correct_number + 1
+            logs = 0
         rate = correct_number/total_TP
         return rate
 
@@ -73,9 +84,16 @@ if __name__ == "__main__":
     pwiN = obj_Naive_Bayes.training(junks_table,news_table)
 
     #testing!!!!!!!
-    test_news_list = obj_Naive_Bayes.pretraining(test_news_path)
-    D1 = obj_Naive_Bayes.clustering(PN,PJ,pwiN,pwiJ,test_news_list)
 
+    test_news_list = obj_Naive_Bayes.pretraining(test_news_path)
+    news_correct_rate = obj_Naive_Bayes.clustering(PN,PJ,pwiN,pwiJ,test_news_list)
+    test_junks_list = obj_Naive_Bayes.pretraining(test_junks_path)
+    junks_correct_rate = obj_Naive_Bayes.clustering(PN,PJ,pwiN,pwiJ,test_junks_list)
+
+    print('Cluster correct rate of news:')
+    print(news_correct_rate)
+    print('Cluster correct rate of junks:')
+    print(1 - junks_correct_rate)
     #obj_Naive_Bayes.output_train_result(news_table)
     #obj_Naive_Bayes.output_train_result(junks_table)
 
