@@ -1,22 +1,18 @@
+#coding:utf-8
 from __future__ import division
+from collections import Counter
 
-class Classifier(object):
-    def classifier(self,list):
-        count = 0
-        feq_table = {}
+class statistics(object):
+    def statistics(self,list):
+        i = 0
+        table = []
         for line in list:
             for word in line:
-                count = count + 1
-                if not (word in feq_table):
-                    feq_table[word] = 1
-                else:
-                    feq_table[word] = feq_table[word] + 1
-        for item in feq_table:
-            temp1 = feq_table[item]
-            temp2 = temp1/count
-            feq_table[item] = temp2
-        table = sorted(feq_table.items(),lambda x,y:cmp(x[1],y[1]), reverse= True )
-        return table
+                table.append(word)
+                i = i + 1
+        counter = Counter(table)
+        times = counter.most_common(i)
+        return times
 
     def counting(self,list):
         count = 0
